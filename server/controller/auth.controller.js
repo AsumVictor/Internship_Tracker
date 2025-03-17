@@ -2,6 +2,7 @@ import catchAsyncError from "../middleware/catchAsyncError.js";
 import ResponseError from "../utilities/ErrorHandler.js";
 import UserModel from "../model/user.model.js";
 import { sendToken } from "../utilities/JWT.js";
+import { allow_origin } from "../utilities/api.js";
 
 // Register account route
 /**
@@ -10,18 +11,24 @@ import { sendToken } from "../utilities/JWT.js";
  */
 export const register = catchAsyncError(async (req, res, next) => {
   try {
+    const { username, email, password } = req.body;
+
     if (!username || !email || !password) {
-      return next(ResponseError("All filed are required!", 400));
+      return next(new ResponseError("All filed are required!", 400));
+    }
+
+    if (!allow_origin.has(email)) {
+      return next(new ResponseError("Confirm your email", 400));
     }
 
     // check for duplicate users
     const exist_user = await UserModel.findOne({
-      $or: [{ email }, { username }],
+      email,
     });
 
     if (exist_user) {
       return next(
-        ResponseError(
+        new ResponseError(
           "This email or username has already been registered! Login",
           400
         )
@@ -51,22 +58,38 @@ export const login = catchAsyncError(async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new ErrorHandler("Please provide all credentails", 400));
+      return next(new ResponseError("Please provide all credentails", 400));
     }
 
     let user = await UserModel.findOne({ email }).select("+password");
 
     if (!user) {
-      return next(new ErrorHandler("Incorrect email or password", 400));
+      return next(new ResponseError("Incorrect email or password", 400));
     }
 
     const matchPassword = await user.comparePassword(password);
 
     if (!matchPassword) {
-      return next(new ErrorHandler("Incorrect email or password", 400));
+      return next(new ResponseError("Incorrect email or password", 400));
     }
 
     sendToken(user, 201, res);
+  } catch (error) {
+    return next(new ResponseError(error.message, 400));
+  }
+});
+
+// get user
+export const getUser = catchAsyncError(async (req, res, next) => {
+  /**
+   * @email
+   * raw @passowrd
+   */
+
+  try {
+    const user = req.user;
+
+    res.status(200).json({ data: user });
   } catch (error) {
     return next(new ResponseError(error.message, 400));
   }

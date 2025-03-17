@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { PlusCircle, Edit, Trash2, ExternalLink } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, Edit, Trash2, ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,29 +13,36 @@ import {
   DialogTrigger,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 // Define the JobApplication interface
 interface JobApplication {
-  id: string
-  companyName: string
-  role: string
-  anticipatedOpeningDate: string
-  applicationDeadline: string
-  preStatus: string
-  requirementsDocLink: string
-  companyCareerWebsite: string
-  onlineAssessment: string
-  interviewRound1: string
-  interviewRound2: string
-  interviewRound3: string
-  finalRound: string
-  importantNotes: string
+  id: string;
+  companyName: string;
+  role: string;
+  anticipatedOpeningDate: string;
+  applicationDeadline: string;
+  preStatus: string;
+  requirementsDocLink: string;
+  companyCareerWebsite: string;
+  onlineAssessment: string;
+  interviewRound1: string;
+  interviewRound2: string;
+  interviewRound3: string;
+  finalRound: string;
+  importantNotes: string;
 }
 
 // Sample data
@@ -72,50 +79,16 @@ const initialApplications: JobApplication[] = [
     finalRound: "Not Started",
     importantNotes: "Have a referral from Sarah",
   },
-]
+];
 
 export default function FinanceApplications() {
-  const [applications, setApplications] = useState<JobApplication[]>(initialApplications)
-  const [currentApplication, setCurrentApplication] = useState<JobApplication | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
+  const [applications, setApplications] =
+    useState<JobApplication[]>(initialApplications);
+  const [currentApplication, setCurrentApplication] =
+    useState<JobApplication | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleCreateOrUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
 
-    const formData = new FormData(event.currentTarget)
-    const applicationData = {
-      id: (formData.get("id") as string) || crypto.randomUUID(),
-      companyName: formData.get("companyName") as string,
-      role: formData.get("role") as string,
-      anticipatedOpeningDate: formData.get("anticipatedOpeningDate") as string,
-      applicationDeadline: formData.get("applicationDeadline") as string,
-      preStatus: formData.get("preStatus") as string,
-      requirementsDocLink: formData.get("requirementsDocLink") as string,
-      companyCareerWebsite: formData.get("companyCareerWebsite") as string,
-      onlineAssessment: formData.get("onlineAssessment") as string,
-      interviewRound1: formData.get("interviewRound1") as string,
-      interviewRound2: formData.get("interviewRound2") as string,
-      interviewRound3: formData.get("interviewRound3") as string,
-      finalRound: formData.get("finalRound") as string,
-      importantNotes: formData.get("importantNotes") as string,
-    }
-
-    if (isEditing) {
-      // Update existing application
-      const updatedApplications = applications.map((app) => (app.id === applicationData.id ? applicationData : app))
-      setApplications(updatedApplications)
-    } else {
-      // Create new application
-      setApplications([...applications, applicationData])
-    }
-
-    setCurrentApplication(null)
-    setIsEditing(false)
-  }
-
-  const handleDelete = async (id: string) => {
-    setApplications(applications.filter((app) => app.id !== id))
-  }
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, string> = {
@@ -125,10 +98,10 @@ export default function FinanceApplications() {
       Pending: "bg-yellow-100 text-yellow-800",
       Completed: "bg-green-100 text-green-800",
       Scheduled: "bg-purple-100 text-purple-800",
-    }
+    };
 
-    return statusMap[status] || "bg-gray-200 text-gray-800"
-  }
+    return statusMap[status] || "bg-gray-200 text-gray-800";
+  };
 
   return (
     <div>
@@ -138,8 +111,8 @@ export default function FinanceApplications() {
           <DialogTrigger asChild>
             <Button
               onClick={() => {
-                setCurrentApplication(null)
-                setIsEditing(false)
+                setCurrentApplication(null);
+                setIsEditing(false);
               }}
               className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
             >
@@ -149,10 +122,14 @@ export default function FinanceApplications() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[700px] backdrop-blur-md bg-white/70 dark:bg-gray-900/70 border border-white/20">
             <DialogHeader>
-              <DialogTitle>{isEditing ? "Edit Application" : "Add New Application"}</DialogTitle>
+              <DialogTitle>
+                {isEditing ? "Edit Application" : "Add New Application"}
+              </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleCreateOrUpdate}>
-              {isEditing && <Input type="hidden" name="id" value={currentApplication?.id} />}
+              {isEditing && (
+                <Input type="hidden" name="id" value={currentApplication?.id} />
+              )}
               <div className="grid grid-cols-2 gap-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="companyName">Company Name</Label>
@@ -165,19 +142,30 @@ export default function FinanceApplications() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
-                  <Input id="role" name="role" defaultValue={currentApplication?.role || ""} required />
+                  <Input
+                    id="role"
+                    name="role"
+                    defaultValue={currentApplication?.role || ""}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="anticipatedOpeningDate">Anticipated Opening Date</Label>
+                  <Label htmlFor="anticipatedOpeningDate">
+                    Anticipated Opening Date
+                  </Label>
                   <Input
                     id="anticipatedOpeningDate"
                     name="anticipatedOpeningDate"
                     type="date"
-                    defaultValue={currentApplication?.anticipatedOpeningDate || ""}
+                    defaultValue={
+                      currentApplication?.anticipatedOpeningDate || ""
+                    }
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="applicationDeadline">Application Deadline</Label>
+                  <Label htmlFor="applicationDeadline">
+                    Application Deadline
+                  </Label>
                   <Input
                     id="applicationDeadline"
                     name="applicationDeadline"
@@ -190,11 +178,15 @@ export default function FinanceApplications() {
                   <Input
                     id="preStatus"
                     name="preStatus"
-                    defaultValue={currentApplication?.preStatus || "Not Started"}
+                    defaultValue={
+                      currentApplication?.preStatus || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="requirementsDocLink">Requirements Doc Link</Label>
+                  <Label htmlFor="requirementsDocLink">
+                    Requirements Doc Link
+                  </Label>
                   <Input
                     id="requirementsDocLink"
                     name="requirementsDocLink"
@@ -202,11 +194,15 @@ export default function FinanceApplications() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="companyCareerWebsite">Company Career Website</Label>
+                  <Label htmlFor="companyCareerWebsite">
+                    Company Career Website
+                  </Label>
                   <Input
                     id="companyCareerWebsite"
                     name="companyCareerWebsite"
-                    defaultValue={currentApplication?.companyCareerWebsite || ""}
+                    defaultValue={
+                      currentApplication?.companyCareerWebsite || ""
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -214,7 +210,9 @@ export default function FinanceApplications() {
                   <Input
                     id="onlineAssessment"
                     name="onlineAssessment"
-                    defaultValue={currentApplication?.onlineAssessment || "Not Started"}
+                    defaultValue={
+                      currentApplication?.onlineAssessment || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -222,7 +220,9 @@ export default function FinanceApplications() {
                   <Input
                     id="interviewRound1"
                     name="interviewRound1"
-                    defaultValue={currentApplication?.interviewRound1 || "Not Started"}
+                    defaultValue={
+                      currentApplication?.interviewRound1 || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -230,7 +230,9 @@ export default function FinanceApplications() {
                   <Input
                     id="interviewRound2"
                     name="interviewRound2"
-                    defaultValue={currentApplication?.interviewRound2 || "Not Started"}
+                    defaultValue={
+                      currentApplication?.interviewRound2 || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -238,7 +240,9 @@ export default function FinanceApplications() {
                   <Input
                     id="interviewRound3"
                     name="interviewRound3"
-                    defaultValue={currentApplication?.interviewRound3 || "Not Started"}
+                    defaultValue={
+                      currentApplication?.interviewRound3 || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -246,7 +250,9 @@ export default function FinanceApplications() {
                   <Input
                     id="finalRound"
                     name="finalRound"
-                    defaultValue={currentApplication?.finalRound || "Not Started"}
+                    defaultValue={
+                      currentApplication?.finalRound || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2 col-span-2">
@@ -296,25 +302,47 @@ export default function FinanceApplications() {
                 key={application.id}
                 className="hover:bg-white/20 dark:hover:bg-gray-800/20 cursor-pointer"
                 onClick={() => {
-                  setCurrentApplication(application)
-                  setIsEditing(false)
+                  setCurrentApplication(application);
+                  setIsEditing(false);
                 }}
               >
-                <TableCell className="font-medium">{application.companyName}</TableCell>
+                <TableCell className="font-medium">
+                  {application.companyName}
+                </TableCell>
                 <TableCell>{application.role}</TableCell>
                 <TableCell>{application.applicationDeadline}</TableCell>
                 <TableCell>
-                  <Badge className={getStatusBadge(application.preStatus)}>{application.preStatus}</Badge>
+                  <Badge className={getStatusBadge(application.preStatus)}>
+                    {application.preStatus}
+                  </Badge>
                 </TableCell>
                 <TableCell>
-                  <Badge className={getStatusBadge(application.onlineAssessment)}>{application.onlineAssessment}</Badge>
+                  <Badge
+                    className={getStatusBadge(application.onlineAssessment)}
+                  >
+                    {application.onlineAssessment}
+                  </Badge>
                 </TableCell>
                 <TableCell>
                   <div className="flex space-x-1">
-                    <Badge className={getStatusBadge(application.interviewRound1)}>R1</Badge>
-                    <Badge className={getStatusBadge(application.interviewRound2)}>R2</Badge>
-                    <Badge className={getStatusBadge(application.interviewRound3)}>R3</Badge>
-                    <Badge className={getStatusBadge(application.finalRound)}>Final</Badge>
+                    <Badge
+                      className={getStatusBadge(application.interviewRound1)}
+                    >
+                      R1
+                    </Badge>
+                    <Badge
+                      className={getStatusBadge(application.interviewRound2)}
+                    >
+                      R2
+                    </Badge>
+                    <Badge
+                      className={getStatusBadge(application.interviewRound3)}
+                    >
+                      R3
+                    </Badge>
+                    <Badge className={getStatusBadge(application.finalRound)}>
+                      Final
+                    </Badge>
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
@@ -325,9 +353,9 @@ export default function FinanceApplications() {
                           variant="outline"
                           size="icon"
                           onClick={(e) => {
-                            e.stopPropagation()
-                            setCurrentApplication(application)
-                            setIsEditing(true)
+                            e.stopPropagation();
+                            setCurrentApplication(application);
+                            setIsEditing(true);
                           }}
                         >
                           <Edit className="h-4 w-4" />
@@ -338,7 +366,11 @@ export default function FinanceApplications() {
                           <DialogTitle>Edit Application</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleCreateOrUpdate}>
-                          <Input type="hidden" name="id" value={currentApplication?.id} />
+                          <Input
+                            type="hidden"
+                            name="id"
+                            value={currentApplication?.id}
+                          />
                           <div className="grid grid-cols-2 gap-4 py-4">
                             {/* Form fields similar to the add form */}
                             {/* ... */}
@@ -375,7 +407,10 @@ export default function FinanceApplications() {
         </Table>
       </div>
       {currentApplication && (
-        <Dialog open={!!currentApplication} onOpenChange={(open) => !open && setCurrentApplication(null)}>
+        <Dialog
+          open={!!currentApplication}
+          onOpenChange={(open) => !open && setCurrentApplication(null)}
+        >
           <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto backdrop-blur-md bg-white/70 dark:bg-gray-900/70 border border-white/20">
             <DialogHeader>
               <DialogTitle className="text-2xl">
@@ -386,7 +421,9 @@ export default function FinanceApplications() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium mb-2">Company Information</h3>
+                  <h3 className="text-lg font-medium mb-2">
+                    Company Information
+                  </h3>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="font-medium">Company:</div>
                     <div>{currentApplication.companyName}</div>
@@ -427,7 +464,9 @@ export default function FinanceApplications() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-medium mb-2">Application Timeline</h3>
+                  <h3 className="text-lg font-medium mb-2">
+                    Application Timeline
+                  </h3>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="font-medium">Opening Date:</div>
                     <div>{currentApplication.anticipatedOpeningDate}</div>
@@ -437,7 +476,9 @@ export default function FinanceApplications() {
 
                     <div className="font-medium">Status:</div>
                     <div>
-                      <Badge className={getStatusBadge(currentApplication.preStatus)}>
+                      <Badge
+                        className={getStatusBadge(currentApplication.preStatus)}
+                      >
                         {currentApplication.preStatus}
                       </Badge>
                     </div>
@@ -447,39 +488,61 @@ export default function FinanceApplications() {
 
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-medium mb-2">Interview Progress</h3>
+                  <h3 className="text-lg font-medium mb-2">
+                    Interview Progress
+                  </h3>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="font-medium">Online Assessment:</div>
                     <div>
-                      <Badge className={getStatusBadge(currentApplication.onlineAssessment)}>
+                      <Badge
+                        className={getStatusBadge(
+                          currentApplication.onlineAssessment
+                        )}
+                      >
                         {currentApplication.onlineAssessment}
                       </Badge>
                     </div>
 
                     <div className="font-medium">Round 1:</div>
                     <div>
-                      <Badge className={getStatusBadge(currentApplication.interviewRound1)}>
+                      <Badge
+                        className={getStatusBadge(
+                          currentApplication.interviewRound1
+                        )}
+                      >
                         {currentApplication.interviewRound1}
                       </Badge>
                     </div>
 
                     <div className="font-medium">Round 2:</div>
                     <div>
-                      <Badge className={getStatusBadge(currentApplication.interviewRound2)}>
+                      <Badge
+                        className={getStatusBadge(
+                          currentApplication.interviewRound2
+                        )}
+                      >
                         {currentApplication.interviewRound2}
                       </Badge>
                     </div>
 
                     <div className="font-medium">Round 3:</div>
                     <div>
-                      <Badge className={getStatusBadge(currentApplication.interviewRound3)}>
+                      <Badge
+                        className={getStatusBadge(
+                          currentApplication.interviewRound3
+                        )}
+                      >
                         {currentApplication.interviewRound3}
                       </Badge>
                     </div>
 
                     <div className="font-medium">Final Round:</div>
                     <div>
-                      <Badge className={getStatusBadge(currentApplication.finalRound)}>
+                      <Badge
+                        className={getStatusBadge(
+                          currentApplication.finalRound
+                        )}
+                      >
                         {currentApplication.finalRound}
                       </Badge>
                     </div>
@@ -502,8 +565,8 @@ export default function FinanceApplications() {
                   size="sm"
                   className="text-red-500 hover:text-red-700 hover:bg-red-100"
                   onClick={() => {
-                    handleDelete(currentApplication.id)
-                    setCurrentApplication(null)
+                    handleDelete(currentApplication.id);
+                    setCurrentApplication(null);
                   }}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
@@ -528,7 +591,10 @@ export default function FinanceApplications() {
       )}
 
       {isEditing && currentApplication && (
-        <Dialog open={isEditing} onOpenChange={(open) => !open && setIsEditing(false)}>
+        <Dialog
+          open={isEditing}
+          onOpenChange={(open) => !open && setIsEditing(false)}
+        >
           <DialogContent className="sm:max-w-[700px] backdrop-blur-md bg-white/70 dark:bg-gray-900/70 border border-white/20">
             <DialogHeader>
               <DialogTitle>Edit Application</DialogTitle>
@@ -547,19 +613,30 @@ export default function FinanceApplications() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
-                  <Input id="role" name="role" defaultValue={currentApplication?.role || ""} required />
+                  <Input
+                    id="role"
+                    name="role"
+                    defaultValue={currentApplication?.role || ""}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="anticipatedOpeningDate">Anticipated Opening Date</Label>
+                  <Label htmlFor="anticipatedOpeningDate">
+                    Anticipated Opening Date
+                  </Label>
                   <Input
                     id="anticipatedOpeningDate"
                     name="anticipatedOpeningDate"
                     type="date"
-                    defaultValue={currentApplication?.anticipatedOpeningDate || ""}
+                    defaultValue={
+                      currentApplication?.anticipatedOpeningDate || ""
+                    }
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="applicationDeadline">Application Deadline</Label>
+                  <Label htmlFor="applicationDeadline">
+                    Application Deadline
+                  </Label>
                   <Input
                     id="applicationDeadline"
                     name="applicationDeadline"
@@ -572,11 +649,15 @@ export default function FinanceApplications() {
                   <Input
                     id="preStatus"
                     name="preStatus"
-                    defaultValue={currentApplication?.preStatus || "Not Started"}
+                    defaultValue={
+                      currentApplication?.preStatus || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="requirementsDocLink">Requirements Doc Link</Label>
+                  <Label htmlFor="requirementsDocLink">
+                    Requirements Doc Link
+                  </Label>
                   <Input
                     id="requirementsDocLink"
                     name="requirementsDocLink"
@@ -584,11 +665,15 @@ export default function FinanceApplications() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="companyCareerWebsite">Company Career Website</Label>
+                  <Label htmlFor="companyCareerWebsite">
+                    Company Career Website
+                  </Label>
                   <Input
                     id="companyCareerWebsite"
                     name="companyCareerWebsite"
-                    defaultValue={currentApplication?.companyCareerWebsite || ""}
+                    defaultValue={
+                      currentApplication?.companyCareerWebsite || ""
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -596,7 +681,9 @@ export default function FinanceApplications() {
                   <Input
                     id="onlineAssessment"
                     name="onlineAssessment"
-                    defaultValue={currentApplication?.onlineAssessment || "Not Started"}
+                    defaultValue={
+                      currentApplication?.onlineAssessment || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -604,7 +691,9 @@ export default function FinanceApplications() {
                   <Input
                     id="interviewRound1"
                     name="interviewRound1"
-                    defaultValue={currentApplication?.interviewRound1 || "Not Started"}
+                    defaultValue={
+                      currentApplication?.interviewRound1 || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -612,7 +701,9 @@ export default function FinanceApplications() {
                   <Input
                     id="interviewRound2"
                     name="interviewRound2"
-                    defaultValue={currentApplication?.interviewRound2 || "Not Started"}
+                    defaultValue={
+                      currentApplication?.interviewRound2 || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -620,7 +711,9 @@ export default function FinanceApplications() {
                   <Input
                     id="interviewRound3"
                     name="interviewRound3"
-                    defaultValue={currentApplication?.interviewRound3 || "Not Started"}
+                    defaultValue={
+                      currentApplication?.interviewRound3 || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -628,7 +721,9 @@ export default function FinanceApplications() {
                   <Input
                     id="finalRound"
                     name="finalRound"
-                    defaultValue={currentApplication?.finalRound || "Not Started"}
+                    defaultValue={
+                      currentApplication?.finalRound || "Not Started"
+                    }
                   />
                 </div>
                 <div className="space-y-2 col-span-2">
@@ -646,7 +741,7 @@ export default function FinanceApplications() {
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    setIsEditing(false)
+                    setIsEditing(false);
                   }}
                 >
                   Cancel
@@ -663,6 +758,5 @@ export default function FinanceApplications() {
         </Dialog>
       )}
     </div>
-  )
+  );
 }
-

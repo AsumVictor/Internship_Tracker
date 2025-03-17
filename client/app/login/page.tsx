@@ -11,6 +11,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowRight, Lock, Mail, Briefcase, BarChart3, Trophy } from "lucide-react"
+import { useDispatch } from "react-redux"
+import axios from "axios"
+import { AUTH } from "@/config/config"
+import { setUser } from "@/redux/authSlice"
 
 // Company logos for the animation
 const companyLogos = [
@@ -102,16 +106,30 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    // Simulate authentication
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/dashboard")
-    }, 1500)
+    try {
+      const { data } = await axios.post(`${AUTH}/login/`, {
+        password,
+        email,
+      },{
+        withCredentials: true
+      });
+
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      dispatch(setUser(data.user));
+      router.replace("/");
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
   }
 
   return (

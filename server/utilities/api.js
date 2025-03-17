@@ -10,3 +10,5 @@ if (
 }
 
 export const url = `${process.env.SHEET_URL}`
+const entity = `${process.env.ALLOW_ORIGIN}`
+export const allow_origin = new Set(entity.split(" "))

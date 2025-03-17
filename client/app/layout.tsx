@@ -1,28 +1,32 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
+"use client";
+import type React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Provider } from "react-redux";
+import { store } from "@/redux/store";
+import AuthProvider from "@/auth/AuthProvider";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "Career Progression Hub",
   description: "Track, manage, and optimize your job search journey",
-    generator: 'v0.dev'
-}
+  generator: "v0.dev",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
-    </html>
-  )
+    <Provider store={store}>
+      <html lang="en">
+        <body className={inter.className}>
+          <AuthProvider>{children}</AuthProvider>
+        </body>
+      </html>
+    </Provider>
+  );
 }
-
-
-
-import './globals.css'

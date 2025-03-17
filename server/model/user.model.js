@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,6 +20,15 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
+      select: false,
+    },
+    access: {
+      type: Number,
+      // Access Level admin: 1111, student:1121, tutor: 1122
+      enum: [1111, 1121, 1122],
+      required: [true, "User access control limit is required"],
+      default: 1121,
+      // Default access level is student
     },
     reset_password_token: {
       type: String,

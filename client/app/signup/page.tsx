@@ -1,16 +1,20 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import { ArrowRight, User, Mail, Lock, CheckCircle } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowRight, User, Mail, Lock, CheckCircle } from "lucide-react";
+import axios from "axios";
+import { AUTH } from "@/config/config";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/authSlice";
 
 // Framer Motion variants
 const containerVariants = {
@@ -22,7 +26,7 @@ const containerVariants = {
       delayChildren: 0.2,
     },
   },
-}
+};
 
 const itemVariants = {
   hidden: { y: 20, opacity: 0 },
@@ -31,7 +35,7 @@ const itemVariants = {
     opacity: 1,
     transition: { type: "spring", stiffness: 300, damping: 24 },
   },
-}
+};
 
 const featureContainerVariants = {
   hidden: { opacity: 0 },
@@ -42,7 +46,7 @@ const featureContainerVariants = {
       delayChildren: 0.5,
     },
   },
-}
+};
 
 const featureVariants = {
   hidden: { x: -50, opacity: 0 },
@@ -51,27 +55,47 @@ const featureVariants = {
     opacity: 1,
     transition: { type: "spring", stiffness: 100, damping: 20 },
   },
-}
+};
 
 export default function SignupPage() {
-  const router = useRouter()
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [agreeTerms, setAgreeTerms] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
-    // Simulate account creation
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/dashboard")
-    }, 1500)
-  }
+    try {
+      const { data } = await axios.post(
+        `${AUTH}/register/`,
+        {
+          username: name,
+          password,
+          email,
+        },
+        // {
+        //   withCredentials: true,
+        // }
+      );
+
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      dispatch(setUser(data.user));
+      router.replace("/");
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-purple-500/20 via-blue-500/20 to-pink-500/20">
@@ -83,7 +107,12 @@ export default function SignupPage() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md backdrop-blur-md bg-white/40 dark:bg-gray-900/40 rounded-2xl border border-white/20 shadow-xl p-8"
         >
-          <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-6"
+          >
             <div className="mb-8 text-center">
               <motion.h1
                 variants={itemVariants}
@@ -91,18 +120,27 @@ export default function SignupPage() {
               >
                 Create Account
               </motion.h1>
-              <motion.p variants={itemVariants} className="text-gray-600 dark:text-gray-300 mt-2">
+              <motion.p
+                variants={itemVariants}
+                className="text-gray-600 dark:text-gray-300 mt-2"
+              >
                 Sign up to start tracking your job applications
               </motion.p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <motion.div variants={itemVariants} className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium flex items-center">
+                <Label
+                  htmlFor="name"
+                  className="text-sm font-medium flex items-center"
+                >
                   <User className="h-4 w-4 mr-2 text-purple-600" />
-                  Full Name
+                  User Name
                 </Label>
-                <motion.div whileFocus={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+                <motion.div
+                  whileFocus={{ scale: 1.01 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
                   <Input
                     id="name"
                     type="text"
@@ -116,11 +154,17 @@ export default function SignupPage() {
               </motion.div>
 
               <motion.div variants={itemVariants} className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium flex items-center">
+                <Label
+                  htmlFor="email"
+                  className="text-sm font-medium flex items-center"
+                >
                   <Mail className="h-4 w-4 mr-2 text-purple-600" />
                   Email
                 </Label>
-                <motion.div whileFocus={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+                <motion.div
+                  whileFocus={{ scale: 1.01 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
                   <Input
                     id="email"
                     type="email"
@@ -134,11 +178,17 @@ export default function SignupPage() {
               </motion.div>
 
               <motion.div variants={itemVariants} className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium flex items-center">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-medium flex items-center"
+                >
                   <Lock className="h-4 w-4 mr-2 text-purple-600" />
                   Password
                 </Label>
-                <motion.div whileFocus={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
+                <motion.div
+                  whileFocus={{ scale: 1.01 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                >
                   <Input
                     id="password"
                     type="password"
@@ -151,32 +201,22 @@ export default function SignupPage() {
                 </motion.div>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium flex items-center">
-                  <CheckCircle className="h-4 w-4 mr-2 text-purple-600" />
-                  Confirm Password
-                </Label>
-                <motion.div whileFocus={{ scale: 1.01 }} transition={{ type: "spring", stiffness: 400, damping: 10 }}>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="bg-white/50 dark:bg-gray-800/50 border-white/20 transition-all duration-300 focus:ring-2 focus:ring-purple-500"
-                    required
-                  />
-                </motion.div>
-              </motion.div>
-
-              <motion.div variants={itemVariants} className="flex items-center space-x-2">
+              <motion.div
+                variants={itemVariants}
+                className="flex items-center space-x-2"
+              >
                 <Checkbox
                   id="terms"
                   checked={agreeTerms}
-                  onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setAgreeTerms(checked as boolean)
+                  }
                   required
                 />
-                <Label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
+                <Label
+                  htmlFor="terms"
+                  className="text-sm text-gray-600 dark:text-gray-300 cursor-pointer"
+                >
                   I agree to the{" "}
                   <motion.span whileHover={{ scale: 1.05 }}>
                     <Link
@@ -198,7 +238,11 @@ export default function SignupPage() {
                 </Label>
               </motion.div>
 
-              <motion.div variants={itemVariants} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <motion.div
+                variants={itemVariants}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <Button
                   type="submit"
                   className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 transition-all duration-300 hover:shadow-lg"
@@ -234,7 +278,11 @@ export default function SignupPage() {
                       <motion.div
                         initial={{ x: 0 }}
                         whileHover={{ x: 5 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                        transition={{
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 10,
+                        }}
                       >
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </motion.div>
@@ -243,7 +291,10 @@ export default function SignupPage() {
                 </Button>
               </motion.div>
 
-              <motion.div variants={itemVariants} className="text-center text-sm text-gray-600 dark:text-gray-300">
+              <motion.div
+                variants={itemVariants}
+                className="text-center text-sm text-gray-600 dark:text-gray-300"
+              >
                 Already have an account?{" "}
                 <motion.span whileHover={{ scale: 1.05 }}>
                   <Link
@@ -280,8 +331,17 @@ export default function SignupPage() {
               Why Join Us?
             </motion.h2>
 
-            <motion.div variants={featureContainerVariants} initial="hidden" animate="visible" className="space-y-6">
-              <motion.div variants={featureVariants} whileHover={{ x: 5 }} className="flex items-start">
+            <motion.div
+              variants={featureContainerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6"
+            >
+              <motion.div
+                variants={featureVariants}
+                whileHover={{ x: 5 }}
+                className="flex items-start"
+              >
                 <motion.div
                   className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mr-4"
                   animate={{
@@ -309,14 +369,21 @@ export default function SignupPage() {
                   </svg>
                 </motion.div>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Organized Tracking</h3>
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                    Organized Tracking
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Keep all your job applications in one place with detailed status tracking.
+                    Keep all your job applications in one place with detailed
+                    status tracking.
                   </p>
                 </div>
               </motion.div>
 
-              <motion.div variants={featureVariants} whileHover={{ x: 5 }} className="flex items-start">
+              <motion.div
+                variants={featureVariants}
+                whileHover={{ x: 5 }}
+                className="flex items-start"
+              >
                 <motion.div
                   className="flex-shrink-0 w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mr-4"
                   animate={{
@@ -345,14 +412,21 @@ export default function SignupPage() {
                   </svg>
                 </motion.div>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Boost Productivity</h3>
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                    Boost Productivity
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Increase your application success rate with our structured approach.
+                    Increase your application success rate with our structured
+                    approach.
                   </p>
                 </div>
               </motion.div>
 
-              <motion.div variants={featureVariants} whileHover={{ x: 5 }} className="flex items-start">
+              <motion.div
+                variants={featureVariants}
+                whileHover={{ x: 5 }}
+                className="flex items-start"
+              >
                 <motion.div
                   className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-4"
                   animate={{
@@ -381,7 +455,9 @@ export default function SignupPage() {
                   </svg>
                 </motion.div>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Secure & Private</h3>
+                  <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">
+                    Secure & Private
+                  </h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     Your data is encrypted and never shared with third parties.
                   </p>
@@ -392,6 +468,5 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

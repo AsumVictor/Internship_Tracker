@@ -4,8 +4,7 @@ import cors from "cors";
 import ErrorHandler from "./middleware/error.js";
 import api_endpoint from "./routes/index.js";
 
-
-
+const allowedOrigins = new Set("http://localhost:3000");
 // setting up cross orgin resoures sharing
 const corsOptions = {
   origin:
@@ -20,7 +19,7 @@ const corsOptions = {
         }
       : "*",
   credentials: true,
-  methods: ["POST"],
+  methods: ["POST", "GET", "PUT"],
 };
 
 app.use(cors(corsOptions));

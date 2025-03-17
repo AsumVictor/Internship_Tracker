@@ -5,6 +5,7 @@ import catchAsyncError from "../middleware/catchAsyncError.js";
 import { nanoid } from "nanoid";
 
 // Get all companies
+import { isAuthenticated } from "../middleware/auth.js";
 
 // DONE:
 export const retrieve_all = catchAsyncError(async (req, res, next) => {
@@ -96,7 +97,7 @@ export const addRecord = catchAsyncError(async (req, res, next) => {
         )
       );
     }
-    
+
     const { data: response_data } = await axios.post(
       `${process.env.SHEET_URL}action=write&path=networking`,
       {

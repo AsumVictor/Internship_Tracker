@@ -1,6 +1,7 @@
 import catchAsyncError from "../middleware/catchAsyncError.js";
 import ResponseError from "../utilities/ErrorHandler.js";
 import UserModel from "../model/user.model.js";
+import { sendToken } from "../utilities/JWT.js";
 
 // Register account route
 /**
@@ -9,17 +10,7 @@ import UserModel from "../model/user.model.js";
  */
 export const register = catchAsyncError(async (req, res, next) => {
   try {
-    /**
-     * Controller for registring a user
-     * For every user, we require
-     * - @username (required and unique)
-     * - @email (required and should follow partnered email format eg. victor.asum@ashesi.edu.gh only ashesi.edu.gh required for now. If email does not follow such format throw error.)
-     * - @password (required, a password should be hashed before saving in the database)
-     * - @acess (user role)
-     * - ...
-     */
-
-    if (!username || !email || !password || !access) {
+    if (!username || !email || !password) {
       return next(ResponseError("All filed are required!", 400));
     }
 
@@ -37,11 +28,13 @@ export const register = catchAsyncError(async (req, res, next) => {
       );
     }
 
+    const newUser = await UserModel.create({
+      username,
+      email,
+      password,
+    });
 
-    // create a new user
-    
-    // return new access and refresh token to the 
-
+    sendToken(newUser, 200, res);
   } catch (error) {
     return next(new ResponseError(error.message, 400));
   }
@@ -55,7 +48,25 @@ export const login = catchAsyncError(async (req, res, next) => {
    */
 
   try {
-    // Todo: I will add business logic later
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(new ErrorHandler("Please provide all credentails", 400));
+    }
+
+    let user = await UserModel.findOne({ email }).select("+password");
+
+    if (!user) {
+      return next(new ErrorHandler("Incorrect email or password", 400));
+    }
+
+    const matchPassword = await user.comparePassword(password);
+
+    if (!matchPassword) {
+      return next(new ErrorHandler("Incorrect email or password", 400));
+    }
+
+    sendToken(user, 201, res);
   } catch (error) {
     return next(new ResponseError(error.message, 400));
   }

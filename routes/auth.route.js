@@ -1,11 +1,12 @@
 import express from "express";
-import multer from "multer";
 
 const router = express.Router();
 
-import {  } from "../controller/auth.controller.js";
+import { register, login } from "../controller/auth.controller.js";
 
-router.get("/");
+router.post("/register", register);
+router.post("/login", login);
+
 
 
 export default router;

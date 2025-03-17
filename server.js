@@ -21,7 +21,7 @@ process.on("unCaughtException", (err) => {
 
 const server = app.listen(process.env.PORT, async (err) => {
   // connect to database
-  await db_connect();
+  // await db_connect();
   console.log(`Server is running at http://localhost:${process.env.PORT}`);
 });
 // handle promises failure

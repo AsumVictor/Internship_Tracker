@@ -5,6 +5,7 @@ import ErrorHandler from "./middleware/error.js";
 import api_endpoint from "./routes/index.js";
 
 
+
 // setting up cross orgin resoures sharing
 const corsOptions = {
   origin:
@@ -32,14 +33,13 @@ app.use(express.json({ limit: "50mb" }));
 
 // temporary middleware
 app.use((req, res, next) => {
-  console.log(`incoming request: ${req.path}`);
+  console.log(`incoming request: ${req.method}--${req.path}`);
   next();
 });
 
 // Setting up API endpoint
 
 app.use("/api/v1", api_endpoint);
-
 
 // Routes for all request not API end-point
 app.all("*", (req, res, next) => {
@@ -50,7 +50,6 @@ app.all("*", (req, res, next) => {
   }
   next();
 });
-
 
 app.use(ErrorHandler);
 export default app;
